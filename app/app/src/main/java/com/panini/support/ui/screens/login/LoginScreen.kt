@@ -15,25 +15,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /**
  * Simulated login screen. Authentication is not real — any non-empty
  * credentials navigate to the ticket list (PoC scope).
  */
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    viewModel: LoginViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold { innerPadding ->
         Column(
@@ -58,8 +58,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(40.dp))
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it; errorMessage = null },
+                value = uiState.email,
+                onValueChange = { viewModel.updateEmail(it) },
                 label = { Text("Email") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -69,8 +69,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it; errorMessage = null },
+                value = uiState.password,
+                onValueChange = { viewModel.updatePassword(it) },
                 label = { Text("Password") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -78,7 +78,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            errorMessage?.let {
+            uiState.errorMessage?.let {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = it, color = MaterialTheme.colorScheme.error)
             }
@@ -87,11 +87,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 
             Button(
                 onClick = {
-                    if (email.isBlank() || password.isBlank()) {
-                        errorMessage = "Please enter email and password."
-                    } else {
-                        onLoginSuccess()
-                    }
+                    viewModel.login(onLoginSuccess)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

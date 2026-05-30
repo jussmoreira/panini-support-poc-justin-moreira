@@ -1,0 +1,9 @@
+type: object
+description: Request body to update a ticket's priority.
+required:
+  - priority
+properties:
+  priority:
+    type: string
+    enum: [CRITICAL, HIGH, MEDIUM, LOW]
+    example: "CRITICAL"

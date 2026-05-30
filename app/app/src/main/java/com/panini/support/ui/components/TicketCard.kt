@@ -16,12 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import com.panini.support.data.model.Priority
 import com.panini.support.data.model.Ticket
 import java.time.format.DateTimeFormatter
 
 /**
  * Reusable card composable for displaying a ticket summary in any list.
+ * Refactored with strict visual hierarchy, clear grids, and beautiful indicators.
  */
 @Composable
 fun TicketCard(
@@ -38,72 +48,120 @@ fun TicketCard(
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // 1. HEADER ROW: Creation Date & Priority Pill
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = ticket.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.weight(1f)
-                )
+                // Creation Date with explicit label
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "Created:",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    Text(
+                        text = ticket.createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+
                 PriorityBadge(priority = ticket.priority)
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
+            // 2. HERO CONTENT: Title on its own dedicated line (never squished)
             Text(
-                text = ticket.provider,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = ticket.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
+            // 3. FOOTER ROW: Explicit Status with Colored Dot Indicator
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = ticket.category.label,
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Text(
-                    text = ticket.status.label,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = statusColor(ticket.status.label)
-                )
-                Text(
-                    text = ticket.createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    // Explicit label for Status
+                    Text(
+                        text = "Status:",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+
+                    // Modern Status Colored Dot
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(statusColor(ticket.status.label))
+                    )
+                    
+                    Text(
+                        text = ticket.status.label,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+
             }
         }
     }
 }
 
+/**
+ * Premium pill-shaped badge for Priority with soft, readable colors.
+ */
 @Composable
 private fun PriorityBadge(priority: Priority) {
-    val color = when (priority) {
-        Priority.CRITICAL -> Color(0xFFD32F2F)
-        Priority.HIGH     -> Color(0xFFF57C00)
-        Priority.MEDIUM   -> Color(0xFFF9A825)
-        Priority.LOW      -> Color(0xFF388E3C)
+    val (backgroundColor, textColor, borderColor) = when (priority) {
+        Priority.CRITICAL -> Triple(Color(0xFFFADBD8), Color(0xFF78281F), Color(0xFFF5B7B1)) // Soft Red
+        Priority.HIGH     -> Triple(Color(0xFFFDEBD0), Color(0xFF7E5109), Color(0xFFF8C471)) // Soft Orange
+        Priority.MEDIUM   -> Triple(Color(0xFFFCF3CF), Color(0xFF7D6608), Color(0xFFF7DC6F)) // Soft Yellow
+        Priority.LOW      -> Triple(Color(0xFFD5F5E3), Color(0xFF1E8449), Color(0xFF2ECC71).copy(alpha = 0.4f)) // Soft Green
     }
-    Text(
-        text = priority.label.uppercase(),
-        style = MaterialTheme.typography.labelSmall,
-        fontWeight = FontWeight.Bold,
-        color = color
-    )
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(backgroundColor)
+            .border(1.dp, borderColor, RoundedCornerShape(6.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = priority.label.uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.ExtraBold,
+            color = textColor
+        )
+    }
 }
 
+/**
+ * Returns solid color for the status dot indicator.
+ */
 private fun statusColor(status: String): Color = when (status) {
-    "Open"        -> Color(0xFF1565C0)
-    "In Progress" -> Color(0xFFF57C00)
-    "Resolved"    -> Color(0xFF388E3C)
-    "Closed"      -> Color(0xFF757575)
+    "Open"        -> Color(0xFF2980B9) // Solid Blue
+    "In Progress" -> Color(0xFFD35400) // Solid Orange
+    "Resolved"    -> Color(0xFF27AE60) // Solid Green
+    "Closed"      -> Color(0xFF7F8C8D) // Solid Gray
     else          -> Color.Unspecified
 }

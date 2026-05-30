@@ -1,0 +1,33 @@
+put:
+  summary: Update ticket status
+  description: Changes the status of a specific ticket (e.g., OPEN → IN_PROGRESS → RESOLVED → CLOSED).
+  operationId: updateTicketStatus
+  tags:
+    - Tickets
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Unique ticket identifier.
+      schema:
+        type: string
+        example: "TKT-A1B2"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/UpdateStatusRequest.yaml"
+  responses:
+    "200":
+      description: Status updated successfully. Returns the updated ticket.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Ticket.yaml"
+    "404":
+      description: Ticket not found.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ErrorResponse.yaml"

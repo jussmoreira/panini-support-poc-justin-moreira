@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.panini.support.data.model.Category
 import com.panini.support.data.model.Priority
-import com.panini.support.data.model.Ticket
 import com.panini.support.data.repository.ApiResult
 import com.panini.support.data.repository.TicketRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +14,12 @@ import kotlinx.coroutines.launch
 data class CreateTicketUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val createdTicket: Ticket? = null,
     val errorMessage: String? = null
 )
 
-class CreateTicketViewModel : ViewModel() {
+class CreateTicketViewModel(
+    private val ticketRepository: TicketRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateTicketUiState())
     val uiState: StateFlow<CreateTicketUiState> = _uiState.asStateFlow()
@@ -40,12 +40,11 @@ class CreateTicketViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            when (val result = TicketRepository.createTicket(title, description, priority, provider, category)) {
+            when (val result = ticketRepository.createTicket(title, description, priority, provider, category)) {
                 is ApiResult.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        isSuccess = true,
-                        createdTicket = result.data
+                        isSuccess = true
                     )
                 }
                 is ApiResult.Error -> {

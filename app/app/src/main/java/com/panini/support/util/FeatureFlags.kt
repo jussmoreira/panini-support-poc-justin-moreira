@@ -1,19 +1,34 @@
 package com.panini.support.util
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
 /**
  * Feature Flags for the Panini Support PoC.
  *
- * Allows the team to enable/disable features quickly during internal testing
- * without modifying multiple parts of the system.
+ * Flags are backed by MutableStateFlow so the UI reacts instantly when a flag
+ * is toggled from the Settings screen — no restart required.
  *
- * In a future phase these could be fetched from a remote config service
- * (e.g., Firebase Remote Config) — the UI already reads from this object,
- * so only this file would need to change.
+ * In a production phase these could be replaced by remote values
+ * (e.g. Firebase Remote Config) without touching any screen logic:
+ * only this object would change.
  */
 object FeatureFlags {
-    /** Controls whether support agents can create new tickets from the app. */
-    const val ENABLE_CREATE_TICKET = true
 
+    private val _enableCreateTicket = MutableStateFlow(true)
+    /** Controls whether support agents can create new tickets from the app. */
+    val enableCreateTicket: StateFlow<Boolean> = _enableCreateTicket.asStateFlow()
+
+    private val _enablePriorityUpdate = MutableStateFlow(true)
     /** Controls whether ticket priority can be updated from the detail screen. */
-    const val ENABLE_PRIORITY_UPDATE = true
+    val enablePriorityUpdate: StateFlow<Boolean> = _enablePriorityUpdate.asStateFlow()
+
+    fun setCreateTicket(enabled: Boolean) {
+        _enableCreateTicket.value = enabled
+    }
+
+    fun setPriorityUpdate(enabled: Boolean) {
+        _enablePriorityUpdate.value = enabled
+    }
 }

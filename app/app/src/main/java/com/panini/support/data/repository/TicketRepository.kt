@@ -5,6 +5,7 @@ import com.panini.support.data.model.Category
 import com.panini.support.data.model.Priority
 import com.panini.support.data.model.Status
 import com.panini.support.data.model.Ticket
+import com.panini.support.data.remote.ApiService
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,9 +33,9 @@ sealed class TicketEvent {
  *   When the backend is ready, replace the mock calls with ApiService
  *   calls — the StateFlow/SharedFlow contract stays the same.
  */
-object TicketRepository {
+class TicketRepository(private val apiService: ApiService) {
 
-    private val _tickets = MutableStateFlow<List<Ticket>>(MockTickets.tickets)
+    private val _tickets = MutableStateFlow<List<Ticket>>(MockTickets.tickets.sortedBy { it.priority.ordinal })
     val tickets: StateFlow<List<Ticket>> = _tickets.asStateFlow()
 
     private val _events = MutableSharedFlow<TicketEvent>()
@@ -64,6 +65,18 @@ object TicketRepository {
             category = category,
             createdAt = LocalDateTime.now()
         )
+        // Integración Futura con ApiService:
+        // val response = apiService.createTicket(
+        //     com.panini.support.data.remote.model.CreateTicketRequest(
+        //         title = title,
+        //         description = description,
+        //         priority = priority.name,
+        //         provider = provider,
+        //         category = category.name
+        //     )
+        // )
+        // if (response.isSuccessful) { /* handle success */ }
+
         // Update the list sorted by priority so Scenario 2 stays consistent
         _tickets.value = (_tickets.value + newTicket).sortedBy { it.priority.ordinal }
         _events.emit(TicketEvent.TicketCreated(newTicket))
@@ -71,14 +84,23 @@ object TicketRepository {
     }
 
     suspend fun updateStatus(ticketId: String, newStatus: Status): ApiResult<Unit> {
+        // Integración Futura con ApiService:
+        // val response = apiService.updateTicketStatus(
+        //     ticketId,
+        //     com.panini.support.data.remote.model.UpdateStatusRequest(newStatus.name)
+        // )
+
         _tickets.value = _tickets.value.map { ticket ->
             if (ticket.id == ticketId) ticket.copy(status = newStatus) else ticket
-        }
+        }.sortedBy { it.priority.ordinal }
         _events.emit(TicketEvent.StatusUpdated(ticketId, newStatus))
         return ApiResult.Success(Unit)
     }
 
     suspend fun updatePriority(ticketId: String, newPriority: Priority): ApiResult<Unit> {
+        // Integración Futura con ApiService:
+        // val response = apiService.updateTicketPriority(ticketId, mapOf("priority" to newPriority.name))
+
         _tickets.value = _tickets.value
             .map { ticket ->
                 if (ticket.id == ticketId) ticket.copy(priority = newPriority) else ticket

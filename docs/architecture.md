@@ -61,27 +61,32 @@ sealed class ApiResult<out T> {
 Avoids unhandled exceptions. The ViewModel always processes an explicit result.
 
 ### UiState per screen
-Every screen has a sealed `UiState` with three states:
+Every screen has a reactive `UiState` represented as a data class holding loading status, success data, and error state:
 ```kotlin
-sealed class TicketListUiState {
-    object Loading : TicketListUiState()
-    data class Success(val tickets: List<Ticket>) : TicketListUiState()
-    data class Error(val message: String) : TicketListUiState()
-}
+data class TicketListUiState(
+    val isLoading: Boolean = false,
+    val tickets: List<Ticket> = emptyList(),
+    val errorMessage: String? = null
+)
 ```
-Even with mock data, the pattern is ready for real async network calls without refactoring.
+Even with mock data, this reactive model aligns perfectly with Jetpack Compose state-driven UI.
 
 ### Sorting responsibility
 Tickets are always sorted `HIGH → MEDIUM → LOW` inside the Repository, not in the UI. Business logic does not belong in Compose composables.
 
 ### Manual DI — AppContainer, no Hilt
-A single `AppContainer` object with `lazy` properties provides all dependencies:
+Dependency injection is handled manually. An `AppContainer` interface is instantiated as `DefaultAppContainer` inside a custom `Application` subclass (`PaniniApplication`):
 ```kotlin
-object AppContainer {
-    val ticketRepository: TicketRepository by lazy { TicketRepository() }
+interface AppContainer {
+    val ticketRepository: TicketRepository
+}
+
+class DefaultAppContainer : AppContainer {
+    private val apiService: ApiService by lazy { RetrofitClient.apiService }
+    override val ticketRepository: TicketRepository by lazy { TicketRepository(apiService) }
 }
 ```
-Hilt adds annotations, build plugins, and a learning curve that are disproportionate for a short-scope PoC. Any engineer can read `AppContainer` and immediately understand the dependency graph.
+ViewModels are instantiated via a common `ViewModelFactory` that receives `TicketRepository` as a constructor argument. In the navigation graph (`AppNavigation`), the container is retrieved from the application context and passed using Jetpack Compose `viewModel(factory = factory)`, ensuring a decoupled architecture without the overhead of dependency injection frameworks like Hilt.
 
 ### No Room Database
 The exam explicitly states no real backend is required. Room would add schema, migrations, and DAO boilerplate with no benefit for a PoC. The Repository is structured so Room can be added later without touching ViewModels or UI.

@@ -82,32 +82,6 @@ object MockTickets {
             assignedTo = "Andrea Solís"
         ),
         Ticket(
-            id = "TKT-006",
-            title = "Proveedor de empaques no cumple estándar de calidad",
-            description = "Los empaques de cartón provistos por Empaques Flexibles del Norte " +
-                    "no cumplen con las especificaciones de resistencia mínima. Se detectaron " +
-                    "múltiples cajas dañadas al recibir el lote en el centro de distribución.",
-            priority = Priority.MEDIUM,
-            status = Status.OPEN,
-            provider = "Empaques Flexibles del Norte",
-            category = Category.PROVIDER,
-            createdAt = LocalDateTime.of(2026, 5, 24, 10, 0),
-            assignedTo = null
-        ),
-        Ticket(
-            id = "TKT-007",
-            title = "Sistema de tracking de envíos no actualiza estados",
-            description = "El portal de seguimiento de LogiPack lleva 2 días sin reflejar " +
-                    "los estados de 14 envíos activos. Los supervisores de distribución no " +
-                    "pueden confirmar la entrega a los puntos de venta del GAM.",
-            priority = Priority.LOW,
-            status = Status.RESOLVED,
-            provider = "LogiPack Transportes CR",
-            category = Category.LOGISTICS,
-            createdAt = LocalDateTime.of(2026, 5, 22, 13, 30),
-            assignedTo = "Carlos Méndez"
-        ),
-        Ticket(
             id = "TKT-008",
             title = "Inventario no concilia entre sistema y físico en CEDI",
             description = "El Centro de Distribución (CEDI) en San Antonio de Belén reporta " +
@@ -132,19 +106,6 @@ object MockTickets {
             category = Category.LOGISTICS,
             createdAt = LocalDateTime.of(2026, 5, 23, 15, 0),
             assignedTo = "Andrea Solís"
-        ),
-        Ticket(
-            id = "TKT-010",
-            title = "Punto de venta Curridabat reporta álbumes defectuosos",
-            description = "El punto de venta SuperMás Curridabat devolvió 120 álbumes por " +
-                    "defecto de encuadernación: las páginas centrales se desprenden al " +
-                    "primer uso. Se requiere coordinación con fábrica para reemplazo.",
-            priority = Priority.MEDIUM,
-            status = Status.CLOSED,
-            provider = "Panini Group Italia (Fábrica)",
-            category = Category.DISTRIBUTION,
-            createdAt = LocalDateTime.of(2026, 5, 20, 9, 15),
-            assignedTo = "Carlos Méndez"
         )
     )
 }

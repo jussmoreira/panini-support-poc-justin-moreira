@@ -2,10 +2,14 @@ package com.panini.support.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Light Theme Palette: FIFA Green + Light Gray Cards
+val FifaGreenLight = Color(0xFF1B4D3E)     // Forest pitch green for FIFA World Cup
+val FifaMutedGrayLight = Color(0xFF5A6B5D) // Slate-green muted secondary
+val BackgroundLight = Color(0xFFF4F6F6)    // Soft off-white/light gray for list background
+val CardGrayLight = Color(0xFFEAECEE)      // Light gray for list cards (replaces purple)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Dark Theme Palette
+val FifaGreenDark = Color(0xFF48C9B0)      // Soft minty green for readability in dark mode
+val FifaMutedGrayDark = Color(0xFF7F8C8D)
+val BackgroundDark = Color(0xFF111822)     // Dark blue-gray background
+val CardGrayDark = Color(0xFF1D2731)       // Dark gray for dark cards

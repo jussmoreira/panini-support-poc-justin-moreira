@@ -19,23 +19,25 @@ data class TicketDetailUiState(
     val errorMessage: String? = null
 )
 
-class TicketDetailViewModel : ViewModel() {
+class TicketDetailViewModel(
+    private val ticketRepository: TicketRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TicketDetailUiState())
     val uiState: StateFlow<TicketDetailUiState> = _uiState.asStateFlow()
 
     fun loadTicket(ticketId: String) {
-        val ticket = TicketRepository.getTicketById(ticketId)
+        val ticket = ticketRepository.getTicketById(ticketId)
         _uiState.value = _uiState.value.copy(ticket = ticket)
     }
 
     fun updateStatus(ticketId: String, newStatus: Status) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, successMessage = null, errorMessage = null)
-            when (val result = TicketRepository.updateStatus(ticketId, newStatus)) {
+            when (val result = ticketRepository.updateStatus(ticketId, newStatus)) {
                 is ApiResult.Success -> {
                     // Re-load ticket to reflect new status
-                    val updated = TicketRepository.getTicketById(ticketId)
+                    val updated = ticketRepository.getTicketById(ticketId)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         ticket = updated,
@@ -55,9 +57,9 @@ class TicketDetailViewModel : ViewModel() {
     fun updatePriority(ticketId: String, newPriority: Priority) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, successMessage = null, errorMessage = null)
-            when (val result = TicketRepository.updatePriority(ticketId, newPriority)) {
+            when (val result = ticketRepository.updatePriority(ticketId, newPriority)) {
                 is ApiResult.Success -> {
-                    val updated = TicketRepository.getTicketById(ticketId)
+                    val updated = ticketRepository.getTicketById(ticketId)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         ticket = updated,

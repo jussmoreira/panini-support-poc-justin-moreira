@@ -17,7 +17,9 @@ import kotlinx.coroutines.launch
  * - Subscribes to [TicketRepository.events] (SharedFlow) to react to ticket creation
  *   and priority updates without manual screen refreshes (Exam req. 5.1).
  */
-class TicketListViewModel : ViewModel() {
+class TicketListViewModel(
+    private val ticketRepository: TicketRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TicketListUiState(isLoading = true))
     val uiState: StateFlow<TicketListUiState> = _uiState.asStateFlow()
@@ -30,7 +32,7 @@ class TicketListViewModel : ViewModel() {
     // ─── Reactive list ────────────────────────────────────────────────────────
     private fun observeTickets() {
         viewModelScope.launch {
-            TicketRepository.tickets.collect { tickets ->
+            ticketRepository.tickets.collect { tickets ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     tickets = tickets
@@ -44,11 +46,12 @@ class TicketListViewModel : ViewModel() {
     // other screens (e.g., CreateTicket or TicketDetail) automatically.
     private fun observeEvents() {
         viewModelScope.launch {
-            TicketRepository.events.collect { event ->
+            ticketRepository.events.collect { event ->
                 when (event) {
                     is TicketEvent.TicketCreated -> {
-                        // List already updated via StateFlow; event is a hook for
-                        // future side-effects like showing a snackbar.
+                        _uiState.value = _uiState.value.copy(
+                            snackbarMessage = "Ticket \"${event.ticket.title}\" created"
+                        )
                     }
                     is TicketEvent.PriorityUpdated -> {
                         // List re-sorted in repository; StateFlow handles the update.
@@ -59,5 +62,9 @@ class TicketListViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    fun clearSnackbar() {
+        _uiState.value = _uiState.value.copy(snackbarMessage = null)
     }
 }
