@@ -1,0 +1,12 @@
+type: object
+description: Standard error response returned by the API.
+required:
+  - code
+  - message
+properties:
+  code:
+    type: integer
+    example: 404
+  message:
+    type: string
+    example: "Ticket not found"

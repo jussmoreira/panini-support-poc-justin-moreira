@@ -1,0 +1,44 @@
+type: object
+description: Support ticket for Panini CR operations.
+required:
+  - id
+  - title
+  - description
+  - priority
+  - status
+  - provider
+  - category
+  - createdAt
+properties:
+  id:
+    type: string
+    example: "TKT-A1B2"
+  title:
+    type: string
+    example: "Missing FIFA 2026 sticker shipment"
+  description:
+    type: string
+    example: "Shipment #4521 from Grupo Nación was expected on 05/20 but never arrived."
+  priority:
+    type: string
+    enum: [CRITICAL, HIGH, MEDIUM, LOW]
+    example: "HIGH"
+  status:
+    type: string
+    enum: [OPEN, IN_PROGRESS, RESOLVED, CLOSED]
+    example: "OPEN"
+  provider:
+    type: string
+    example: "Grupo Nación"
+  category:
+    type: string
+    enum: [INVENTORY, DISTRIBUTION, PROVIDER, LOGISTICS]
+    example: "DISTRIBUTION"
+  createdAt:
+    type: string
+    format: date-time
+    example: "2026-05-28T10:30:00"
+  assignedTo:
+    type: string
+    nullable: true
+    example: "Carlos Méndez"

@@ -1,0 +1,20 @@
+openapi: 3.0.3
+info:
+  title: Panini Support Ticket API
+  description: API for managing support tickets in the Panini PoC application.
+  version: 1.0.0
+servers:
+  - url: https://api.panini.support/v1
+    description: Production server
+  - url: http://localhost:8080/api
+    description: Local development server
+
+paths:
+  /tickets:
+    $ref: './paths/tickets.yaml'
+  /tickets/{id}:
+    $ref: './paths/ticket-by-id.yaml'
+  /tickets/{id}/status:
+    $ref: './paths/ticket-status.yaml'
+  /tickets/{id}/priority:
+    $ref: './paths/ticket-priority.yaml'

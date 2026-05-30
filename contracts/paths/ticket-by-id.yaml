@@ -1,0 +1,27 @@
+get:
+  summary: Get ticket by ID
+  description: Returns the full details of a single ticket.
+  operationId: getTicketById
+  tags:
+    - Tickets
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Unique ticket identifier.
+      schema:
+        type: string
+        example: "TKT-A1B2"
+  responses:
+    "200":
+      description: Ticket found.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Ticket.yaml"
+    "404":
+      description: Ticket not found.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ErrorResponse.yaml"

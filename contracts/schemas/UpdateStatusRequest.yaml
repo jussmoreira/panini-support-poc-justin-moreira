@@ -1,0 +1,9 @@
+type: object
+description: Request body to update a ticket's status.
+required:
+  - status
+properties:
+  status:
+    type: string
+    enum: [OPEN, IN_PROGRESS, RESOLVED, CLOSED]
+    example: "IN_PROGRESS"

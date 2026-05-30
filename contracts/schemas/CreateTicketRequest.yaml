@@ -1,0 +1,26 @@
+type: object
+description: Request body to create a new support ticket.
+required:
+  - title
+  - description
+  - priority
+  - provider
+  - category
+properties:
+  title:
+    type: string
+    example: "Damaged sticker packs in Heredia shipment"
+  description:
+    type: string
+    example: "30% of packs in batch #7832 arrived with water damage."
+  priority:
+    type: string
+    enum: [CRITICAL, HIGH, MEDIUM, LOW]
+    example: "HIGH"
+  provider:
+    type: string
+    example: "Distribuidora Del Valle"
+  category:
+    type: string
+    enum: [INVENTORY, DISTRIBUTION, PROVIDER, LOGISTICS]
+    example: "INVENTORY"

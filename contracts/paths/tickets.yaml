@@ -1,0 +1,47 @@
+get:
+  summary: List all support tickets
+  description: Returns all tickets sorted by priority (CRITICAL first).
+  operationId: getTickets
+  tags:
+    - Tickets
+  responses:
+    "200":
+      description: List of tickets retrieved successfully.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../schemas/Ticket.yaml"
+    "500":
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ErrorResponse.yaml"
+
+post:
+  summary: Create a new support ticket
+  description: Registers a new support ticket. The server assigns an ID and sets the initial status to OPEN.
+  operationId: createTicket
+  tags:
+    - Tickets
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/CreateTicketRequest.yaml"
+  responses:
+    "201":
+      description: Ticket created successfully.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/Ticket.yaml"
+    "400":
+      description: Invalid request body.
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/ErrorResponse.yaml"
