@@ -1,0 +1,42 @@
+# ============================================================
+# Android / Gradle
+# ============================================================
+*.iml
+.gradle/
+local.properties
+/build
+/app/build
+/app/app/build
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ============================================================
+# IntelliJ / Android Studio
+# ============================================================
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+# Keep: .idea/runConfigurations (shared run configs are useful)
+
+# ============================================================
+# OS-specific
+# ============================================================
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Signing & secrets (never commit these)
+# ============================================================
+*.jks
+*.keystore
+keystore.properties
+
+# ============================================================
+# Test / coverage outputs
+# ============================================================
+/test-results/
+/coverage/
