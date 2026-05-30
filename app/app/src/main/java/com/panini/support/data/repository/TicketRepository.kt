@@ -99,7 +99,10 @@ class TicketRepository(private val apiService: ApiService) {
 
     suspend fun updatePriority(ticketId: String, newPriority: Priority): ApiResult<Unit> {
         // Integración Futura con ApiService:
-        // val response = apiService.updateTicketPriority(ticketId, mapOf("priority" to newPriority.name))
+        // val response = apiService.updateTicketPriority(
+        //     ticketId,
+        //     com.panini.support.data.remote.model.UpdatePriorityRequest(newPriority.name)
+        // )
 
         _tickets.value = _tickets.value
             .map { ticket ->

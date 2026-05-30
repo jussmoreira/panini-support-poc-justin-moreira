@@ -2,6 +2,7 @@ package com.panini.support.data.remote
 
 import com.panini.support.data.remote.model.CreateTicketRequest
 import com.panini.support.data.remote.model.TicketDto
+import com.panini.support.data.remote.model.UpdatePriorityRequest
 import com.panini.support.data.remote.model.UpdateStatusRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -35,6 +36,6 @@ interface ApiService {
     @PUT("tickets/{id}/priority")
     suspend fun updateTicketPriority(
         @Path("id") id: String,
-        @Body request: Map<String, String>
+        @Body request: UpdatePriorityRequest
     ): Response<TicketDto>
 }

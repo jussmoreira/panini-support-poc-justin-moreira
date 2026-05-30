@@ -38,6 +38,10 @@ data class UpdateStatusRequest(
     val status: String
 )
 
+data class UpdatePriorityRequest(
+    val priority: String
+)
+
 // ─── Mapper ───────────────────────────────────────────────────────────────────
 
 /**

@@ -26,7 +26,7 @@ The Repository is the only class that knows where data comes from — mock or re
 |---------|---------------|
 | `data/model/` | Domain entities used across the app (`Ticket`, enums) |
 | `data/remote/` | Retrofit interface and DTOs — prepared for future backend |
-| `data/remote/model/` | DTOs with `@SerializedName` + mappers to domain models |
+| `data/remote/model/` | DTOs + mappers (`toDomain()`) to domain models |
 | `data/mock/` | Realistic Panini CR mock data — `mutableListOf` for in-memory mutation |
 | `data/repository/` | Single source of truth — exposes `StateFlow` and `SharedFlow` |
 | `ui/screens/` | One folder per screen, each with `Screen.kt` + `ViewModel.kt` + `UiState.kt` |
@@ -44,7 +44,7 @@ DTOs are kept separate from domain models with explicit mappers:
 fun TicketDto.toDomain() = Ticket(
     id = id,
     title = title,
-    priority = TicketPriority.valueOf(priority),
+    priority = Priority.valueOf(priority.uppercase()),
     ...
 )
 ```

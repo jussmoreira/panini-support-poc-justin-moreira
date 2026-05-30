@@ -86,6 +86,16 @@ fun TicketCard(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 2b. Provider & Category (required in the list per spec)
+            Text(
+                text = "${ticket.provider} · ${ticket.category.label}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline,
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             // 3. FOOTER ROW: Explicit Status with Colored Dot Indicator
@@ -110,7 +120,7 @@ fun TicketCard(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(statusColor(ticket.status.label))
+                            .background(statusColor(ticket.status))
                     )
                     
                     Text(
@@ -153,15 +163,4 @@ private fun PriorityBadge(priority: Priority) {
             color = textColor
         )
     }
-}
-
-/**
- * Returns solid color for the status dot indicator.
- */
-private fun statusColor(status: String): Color = when (status) {
-    "Open"        -> Color(0xFF2980B9) // Solid Blue
-    "In Progress" -> Color(0xFFD35400) // Solid Orange
-    "Resolved"    -> Color(0xFF27AE60) // Solid Green
-    "Closed"      -> Color(0xFF7F8C8D) // Solid Gray
-    else          -> Color.Unspecified
 }
